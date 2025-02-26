@@ -26,7 +26,6 @@
 "settingsviews_libreLinkUpReAcceptNeeded" = "Aceptar terminos";
 "settingsviews_libreLinkUpNoActiveSensor" = "Sin datos de sensor activo";
 "settingsviews_translateOnlineHelp" = "Traducir Documentación";
-"settingsviews_showHelpIcon" = "Mostrar icono";
 "settingsviews_restartNeeded" = "(Pendiente reiniciar)";
 "settingsviews_showReadingInNotification" = "Mostrar en Notificaciones";
 "settingsviews_labelShowReadingInAppBadge" = "Mostrar en el icono de la app";
@@ -49,8 +48,6 @@
 "settingsviews_showTreatmentsOnChart" = "Mostrar Tratamientos";
 "settingsviews_smallBolusTreatmentThreshold" = "Límite Micro-bolo";
 "settingsviews_smallBolusTreatmentThresholdMessage" = "Por debajo de cuántas unidades debemos considerar un bolo como micro-bolo?\n\n(Valor recomendado: 1.0U)";
-"settingsviews_showSmallBolusTreatmentsOnChart" = "Mostrar Micro-bolos en Gráfica";
-"settingsviews_offsetCarbTreatmentsOnChart" = "Desplazar HC en Gráfica";
 "settingsviews_sectiontitlestatistics" = "Estadísticas";
 "settingsviews_showStatistics" = "Mostrar Estadísticas";
 "settingsviews_daysToUseStatisticsTitle" = "Días a Calcular";
@@ -65,7 +62,7 @@
 "settingsviews_transmitterid" = "ID del Transmisor";
 "settingsviews_transmitterid_text_for_button" = "ID del Transmisor";
 "settingsviews_givetransmitterid" = "ID del Transmisor";
-"settingsviews_resettransmitter" = "Resetear Transmisor (solo G5/Anubis)";
+"settingsviews_resettransmitter" = "Transmisor Anubis";
 "settingsviews_resetDexcomTransmitterMessage" = "\nEsta opción intentará resetear el transmisor durante la próxima conexión.\n\nEsto solo puede funcionar con transmisores G5 y transmisores G6 Anubis.\n\nNo funciona para transmisores normales tipo G6 y One.";
 "settingsviews_nonfixedtransmitter" = "Habilitar Calibración Multi-punto";
 "settingsviews_labelNonFixed" = "Calibración Multi-punto";

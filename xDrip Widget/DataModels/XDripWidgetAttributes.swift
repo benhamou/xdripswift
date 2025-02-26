@@ -53,6 +53,9 @@ struct XDripWidgetAttributes: ActivityAttributes {
         var warnUserToOpenApp: Bool = true
         var liveActivityType: LiveActivityType
         var dataSourceDescription: String
+        
+        var deviceStatusCreatedAt: Date?
+        var deviceStatusLastLoopDate: Date?
 
         var bgUnitString: String {
             isMgDl ? Texts_Common.mgdl : Texts_Common.mmol
@@ -66,15 +69,7 @@ struct XDripWidgetAttributes: ActivityAttributes {
             bgReadingDates[0]
         }
 
-        var bgValueStringInUserChosenUnit: String {
-            if let bgReadingDate = bgReadingDate, bgReadingDate > Date().addingTimeInterval(-ConstantsWidgetExtension.bgReadingDateVeryStaleInMinutes) {
-                bgReadingValues[0].mgDlToMmolAndToString(mgDl: isMgDl)
-            } else {
-                isMgDl ? "---" : "-.-"
-            }
-        }
-
-        init(bgReadingValues: [Double], bgReadingDates: [Date], isMgDl: Bool, slopeOrdinal: Int, deltaValueInUserUnit: Double?, urgentLowLimitInMgDl: Double, lowLimitInMgDl: Double, highLimitInMgDl: Double, urgentHighLimitInMgDl: Double, liveActivityType: LiveActivityType, dataSourceDescription: String? = "") {
+        init(bgReadingValues: [Double], bgReadingDates: [Date], isMgDl: Bool, slopeOrdinal: Int, deltaValueInUserUnit: Double?, urgentLowLimitInMgDl: Double, lowLimitInMgDl: Double, highLimitInMgDl: Double, urgentHighLimitInMgDl: Double, liveActivityType: LiveActivityType, dataSourceDescription: String? = "", deviceStatusCreatedAt: Date?, deviceStatusLastLoopDate: Date?) {
         
             self.bgReadingFloats = bgReadingValues.map(Float16.init)
 
@@ -91,6 +86,49 @@ struct XDripWidgetAttributes: ActivityAttributes {
             self.urgentHighLimitInMgDl = urgentHighLimitInMgDl            
             self.liveActivityType = liveActivityType
             self.dataSourceDescription = dataSourceDescription ?? ""
+            
+            self.deviceStatusCreatedAt = deviceStatusCreatedAt
+            self.deviceStatusLastLoopDate = deviceStatusLastLoopDate
+        }
+        
+        /// returns blood glucose value as a string in the user-defined measurement unit. Will check and display also high, low and error texts as required.
+        /// - Returns: a String with the formatted value/unit or error text
+        func bgValueStringInUserChosenUnit() -> String {
+            if let bgReadingDate = bgReadingDate, bgReadingDate > Date().addingTimeInterval(-ConstantsWidgetExtension.bgReadingDateVeryStaleInMinutes), let bgValueInMgDl = bgValueInMgDl {
+                var returnValue: String
+                
+                if bgValueInMgDl >= 400 {
+                    returnValue = Texts_Common.HIGH
+                } else if bgValueInMgDl >= 40 {
+                    returnValue = bgValueInMgDl.mgDlToMmolAndToString(mgDl: isMgDl)
+                } else if bgValueInMgDl > 12 {
+                    returnValue = Texts_Common.LOW
+                } else {
+                    switch bgValueInMgDl {
+                    case 0:
+                        returnValue = "??0"
+                    case 1:
+                        returnValue = "?SN"
+                    case 2:
+                        returnValue = "??2"
+                    case 3:
+                        returnValue = "?NA"
+                    case 5:
+                        returnValue = "?NC"
+                    case 6:
+                        returnValue = "?CD"
+                    case 9:
+                        returnValue = "?AD"
+                    case 12:
+                        returnValue = "?RF"
+                    default:
+                        returnValue = "???"
+                    }
+                }
+                return returnValue
+            } else {
+                return isMgDl ? "---" : "-.-"
+            }
         }
         
         /// Blood glucose color dependant on the user defined limit values and based upon the time since the last reading
@@ -162,6 +200,38 @@ struct XDripWidgetAttributes: ActivityAttributes {
                 }
             } else {
                 return ""
+            }
+        }
+                
+        func deviceStatusColor() -> Color? {
+            if let lastLoopDate = deviceStatusLastLoopDate, let createdAt = deviceStatusCreatedAt {
+                if lastLoopDate > .now.addingTimeInterval(-ConstantsHomeView.loopShowWarningAfterMinutes) {
+                    return .green
+                } else if lastLoopDate > .now.addingTimeInterval(-ConstantsHomeView.loopShowNoDataAfterMinutes) {
+                    return .green
+                } else if createdAt > .now.addingTimeInterval(-ConstantsHomeView.loopShowNoDataAfterMinutes) {
+                    return .yellow
+                } else {
+                    return .red
+                }
+            } else {
+                return nil
+            }
+        }
+        
+        func deviceStatusIconImage() -> Image? {
+            if let lastLoopDate = deviceStatusLastLoopDate, let createdAt = deviceStatusCreatedAt {
+                if lastLoopDate > .now.addingTimeInterval(-ConstantsHomeView.loopShowWarningAfterMinutes) {
+                    return Image(systemName: "checkmark.circle.fill")
+                } else if lastLoopDate > .now.addingTimeInterval(-ConstantsHomeView.loopShowNoDataAfterMinutes) {
+                    return Image(systemName: "checkmark.circle")
+                } else if createdAt > .now.addingTimeInterval(-ConstantsHomeView.loopShowNoDataAfterMinutes) {
+                    return Image(systemName: "questionmark.circle")
+                } else {
+                    return Image(systemName: "exclamationmark.circle")
+                }
+            } else {
+                return nil
             }
         }
     }
